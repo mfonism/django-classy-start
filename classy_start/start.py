@@ -36,25 +36,22 @@ def start_project(name: str, directory: Optional[str] = None):
     follow_up_start_project(name, directory)
 
 
-def follow_up_start_project(name: str, directory: Optional):
+def follow_up_start_project(name: str, directory: Optional[str] = None):
     if directory is None:
         manage_dir = pathlib.Path(".") / name
     else:
         manage_dir = pathlib.Path(directory)
 
     manage_dir.resolve(strict=True)
+    name_change_map = {
+        "secrets.py": ".env",
+        "gitignore.py": ".gitignore",
+        "requirements.py": "requirements.txt",
+    }
 
-    # rename secrets file
-    secrets_dot_py = manage_dir / "secrets.py"
-    dot_env = manage_dir / ".env"
-    secrets_dot_py.rename(dot_env)
+    for (old_name, new_name) in name_change_map.items():
+        rename_file(old_name, new_name, base_dir=manage_dir)
 
-    # rename gitignore file
-    gitignore_dot_py = manage_dir / "gitignore.py"
-    dot_gitignore = manage_dir / ".gitignore"
-    gitignore_dot_py.rename(dot_gitignore)
 
-    # rename requirements file
-    requirements_dot_py = manage_dir / "requirements.py"
-    requirements_dot_txt = manage_dir / "requirements.txt"
-    requirements_dot_py.rename(requirements_dot_txt)
+def rename_file(old_name, new_name, base_dir):
+    (base_dir / old_name).rename(base_dir / new_name)
