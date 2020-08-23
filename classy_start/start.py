@@ -1,4 +1,5 @@
 import enum
+import pathlib
 import subprocess
 from typing import List, Optional
 
@@ -31,3 +32,19 @@ def start_app(name: str, directory: Optional[str] = None):
 
 def start_project(name: str, directory: Optional[str] = None):
     _start(Startable.PROJECT, name, directory)
+
+    follow_up_start_project(name, directory)
+
+
+def follow_up_start_project(name: str, directory: Optional):
+    if directory is None:
+        manage_dir = pathlib.Path(".") / name
+    else:
+        manage_dir = pathlib.Path(directory)
+
+    manage_dir.resolve(strict=True)
+
+    # rename secrets file
+    secrets_dot_py = manage_dir / "secrets.py"
+    dot_env = manage_dir / ".env"
+    secrets_dot_py.rename(dot_env)

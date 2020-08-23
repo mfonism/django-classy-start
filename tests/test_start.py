@@ -1,4 +1,7 @@
+import pathlib
 import shlex
+
+import mock
 
 from classy_start.paths import APP_TEMPLATES_DIR, PROJECT_TEMPLATES_DIR
 from classy_start.start import start_app, start_project
@@ -17,7 +20,8 @@ def test_start_app(fake_process):
     assert count == 1
 
 
-def test_start_project(fake_process):
+@mock.patch("pathlib.Path.rename")
+def test_start_project(mock_rename, fake_process):
 
     fake_process.keep_last_process(True)
     fake_process.register_subprocess([fake_process.any()])
@@ -30,3 +34,4 @@ def test_start_project(fake_process):
         )
     )
     assert count == 1
+    mock_rename.assert_called_once_with(pathlib.Path(".") / ".env")
