@@ -34,4 +34,11 @@ def test_start_project(mock_rename, fake_process):
         )
     )
     assert count == 1
-    mock_rename.assert_called_once_with(pathlib.Path(".") / ".env")
+
+    mock_rename.assert_has_calls(
+        [
+            mock.call(pathlib.Path(".") / ".env"),
+            mock.call(pathlib.Path(".") / ".gitignore"),
+            mock.call(pathlib.Path(".") / "requirements.txt"),
+        ]
+    )

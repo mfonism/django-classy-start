@@ -48,3 +48,13 @@ def follow_up_start_project(name: str, directory: Optional):
     secrets_dot_py = manage_dir / "secrets.py"
     dot_env = manage_dir / ".env"
     secrets_dot_py.rename(dot_env)
+
+    # rename gitignore file
+    gitignore_dot_py = manage_dir / "gitignore.py"
+    dot_gitignore = manage_dir / ".gitignore"
+    gitignore_dot_py.rename(dot_gitignore)
+
+    # rename requirements file
+    requirements_dot_py = manage_dir / "requirements.py"
+    requirements_dot_txt = manage_dir / "requirements.txt"
+    requirements_dot_py.rename(requirements_dot_txt)
