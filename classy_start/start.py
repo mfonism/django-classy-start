@@ -1,28 +1,33 @@
+import enum
 import subprocess
 from typing import List, Optional
 
-from .paths import APP_TEMPLATES_DIR, PROJECT_TEMPLATES_DIR
+from . import paths
+
+
+@enum.unique
+class Startable(enum.Enum):
+    PROJECT = 0
+    APP = 1
+
+
+def _start(what: Startable, name: str, directory: Optional[str] = None):
+    directive = f"start{what.name.lower()}"
+    cmd: List[str]
+    cmd = ["django-admin", directive, name]
+
+    if directory is not None:
+        cmd.append(directory)
+
+    templates_dir_name = f"{what.name}_TEMPLATES_DIR"
+    cmd.extend(["--template", str(getattr(paths, templates_dir_name))])
+
+    subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 
 def start_app(name: str, directory: Optional[str] = None):
-    cmd: List[str]
-    cmd = ["django-admin", "startapp", name]
-
-    if directory is not None:
-        cmd.append(directory)
-
-    cmd.extend(["--template", str(APP_TEMPLATES_DIR)])
-
-    subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    _start(Startable.APP, name, directory)
 
 
 def start_project(name: str, directory: Optional[str] = None):
-    cmd: List[str]
-    cmd = ["django-admin", "startproject", name]
-
-    if directory is not None:
-        cmd.append(directory)
-
-    cmd.extend(["--template", str(PROJECT_TEMPLATES_DIR)])
-
-    subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    _start(Startable.PROJECT, name, directory)
