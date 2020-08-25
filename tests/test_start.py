@@ -1,7 +1,9 @@
 import pathlib
+import random
 import shlex
+import string
+from unittest import mock
 
-import mock
 import pytest
 
 from classy_start.file_contents import (
@@ -15,6 +17,7 @@ from classy_start.start import (
     follow_up_start_project,
     rename_file,
     create_accounts_app,
+    write_file,
 )
 
 
@@ -113,11 +116,8 @@ def test_rename_file(mock_rename):
 )
 @mock.patch("pathlib.Path.mkdir")
 @mock.patch("classy_start.start.start_app")
-@mock.patch("pathlib.Path.touch")
-@mock.patch("pathlib.Path.write_text")
-def test_create_accounts_app(
-    mock_write_text, _mock_touch, mock_start_app, _mock_mkdir, manage_dir
-):
+@mock.patch("classy_start.start.write_file")
+def test_create_accounts_app(mock_write_file, mock_start_app, _mock_mkdir, manage_dir):
     """
     Assert that ~.create_accoung_app() calls ~.start_app() with the
     correct arguments. And that it calls pathlib.Path.write_text the
@@ -125,12 +125,28 @@ def test_create_accounts_app(
     """
     create_accounts_app(manage_dir)
 
-    mock_start_app.assert_called_once_with("accounts", manage_dir / "accounts")
+    accounts_app_dir = manage_dir / "accounts"
+    model_file = accounts_app_dir / "models.py"
+    admin_file = accounts_app_dir / "admin.py"
 
-    assert mock_write_text.call_count == 2
-    mock_write_text.assert_has_calls(
+    mock_start_app.assert_called_once_with("accounts", accounts_app_dir)
+
+    assert mock_write_file.call_count == 2
+    assert mock_write_file.has_calls(
         [
-            mock.call(auth_user_model_file_content),
-            mock.call(auth_user_admin_file_content),
+            mock.call(model_file, auth_user_model_file_content,),
+            mock.call(admin_file, auth_user_admin_file_content,),
         ]
     )
+
+
+@mock.patch("pathlib.Path.touch")
+@mock.patch("pathlib.Path.write_text")
+def test_write_file(mock_write_text, mock_touch):
+    file = pathlib.Path("project") / "app" / "an_app_file.py"
+    content = "".join(random.sample(string.printable, 64))
+
+    write_file(file, content)
+
+    mock_touch.assert_called_once()
+    mock_write_text.assert_called_once_with(content)

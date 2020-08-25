@@ -65,10 +65,13 @@ def create_accounts_app(directory):
 
     start_app("accounts", dest)
 
-    model_file = dest / "models.py"
-    model_file.touch()
-    model_file.write_text(file_contents.auth_user_model_file_content)
+    for (filename, content) in [
+        ("models.py", file_contents.auth_user_model_file_content),
+        ("admin.py", file_contents.auth_user_admin_file_content),
+    ]:
+        write_file(dest / filename, content)
 
-    admin_file = dest / "admin.py"
-    admin_file.touch()
-    admin_file.write_text(file_contents.auth_user_admin_file_content)
+
+def write_file(file, content):
+    file.touch()
+    file.write_text(content)
