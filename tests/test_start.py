@@ -2,13 +2,19 @@ import pathlib
 import shlex
 
 import mock
+import pytest
 
+from classy_start.file_contents import (
+    auth_user_model_file_content,
+    auth_user_admin_file_content,
+)
 from classy_start.paths import APP_TEMPLATES_DIR, PROJECT_TEMPLATES_DIR
 from classy_start.start import (
     start_app,
     start_project,
     follow_up_start_project,
     rename_file,
+    create_accounts_app,
 )
 
 
@@ -45,10 +51,14 @@ def test_start_project(mock_follow_up, fake_process):
 
 @mock.patch("pathlib.Path.resolve")
 @mock.patch("classy_start.start.rename_file")
-def test_follow_up_start_project(mock_rename_file, _mock_resolve):
+@mock.patch("classy_start.start.create_accounts_app")
+def test_follow_up_start_project(
+    mock_create_accounts_app, mock_rename_file, _mock_resolve
+):
     """
     Assert that ~.follow_up_start_project() calls ~.rename_file() the correct number of
-    times and with the correct arguments.
+    times and with the correct arguments. And that it also calls
+    ~.create_accounts_app() with the correct arguments.
     """
     follow_up_start_project("projectible")
 
@@ -66,8 +76,12 @@ def test_follow_up_start_project(mock_rename_file, _mock_resolve):
             ),
         ]
     )
+    mock_create_accounts_app.assert_called_once_with(pathlib.Path("projectible"))
 
+    # reset the **all used** mocks
     mock_rename_file.reset_mock()
+    mock_create_accounts_app.reset_mock()
+
     follow_up_start_project("projectible", pathlib.Path("."))
 
     assert mock_rename_file.call_count == 3
@@ -80,6 +94,7 @@ def test_follow_up_start_project(mock_rename_file, _mock_resolve):
             ),
         ]
     )
+    mock_create_accounts_app.assert_called_once_with(pathlib.Path("."))
 
 
 @mock.patch("pathlib.Path.rename")
@@ -91,3 +106,31 @@ def test_rename_file(mock_rename):
     rename_file("old_name", "new_name", base_dir)
 
     mock_rename.assert_called_once_with(base_dir / "new_name")
+
+
+@pytest.mark.parametrize(
+    "manage_dir", [pathlib.Path("."), pathlib.Path(".") / "projectible"]
+)
+@mock.patch("pathlib.Path.mkdir")
+@mock.patch("classy_start.start.start_app")
+@mock.patch("pathlib.Path.touch")
+@mock.patch("pathlib.Path.write_text")
+def test_create_accounts_app(
+    mock_write_text, _mock_touch, mock_start_app, _mock_mkdir, manage_dir
+):
+    """
+    Assert that ~.create_accoung_app() calls ~.start_app() with the
+    correct arguments. And that it calls pathlib.Path.write_text the
+    correct number of times and with the correct arguments.
+    """
+    create_accounts_app(manage_dir)
+
+    mock_start_app.assert_called_once_with("accounts", manage_dir / "accounts")
+
+    assert mock_write_text.call_count == 2
+    mock_write_text.assert_has_calls(
+        [
+            mock.call(auth_user_model_file_content),
+            mock.call(auth_user_admin_file_content),
+        ]
+    )

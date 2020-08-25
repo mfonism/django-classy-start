@@ -3,7 +3,7 @@ import pathlib
 import subprocess
 from typing import List, Optional
 
-from . import paths
+from . import file_contents, paths
 
 
 @enum.unique
@@ -52,6 +52,23 @@ def follow_up_start_project(name: str, directory: Optional[str] = None):
     for (old_name, new_name) in name_change_map.items():
         rename_file(old_name, new_name, base_dir=manage_dir)
 
+    create_accounts_app(manage_dir)
+
 
 def rename_file(old_name, new_name, base_dir):
     (base_dir / old_name).rename(base_dir / new_name)
+
+
+def create_accounts_app(directory):
+    dest = directory / "accounts"
+    dest.mkdir()
+
+    start_app("accounts", dest)
+
+    model_file = dest / "models.py"
+    model_file.touch()
+    model_file.write_text(file_contents.auth_user_model_file_content)
+
+    admin_file = dest / "admin.py"
+    admin_file.touch()
+    admin_file.write_text(file_contents.auth_user_admin_file_content)
