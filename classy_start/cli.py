@@ -1,6 +1,7 @@
 import argparse
+import sys
 
-from . import errors, start
+from . import start
 
 parser = argparse.ArgumentParser()
 
@@ -28,7 +29,8 @@ def main():
     elif args.what in ("p", "project"):
         start.start_project(args.name, args.directory)
     else:
-        raise errors.CommandError(
-            f"{args.what} is not a valid thing to start. "
-            f"It should be either 'app' or 'project'"
+        sys.stderr.write(
+            f"'{args.what}' is not a valid thing to start. "
+            f"It should be either 'app' or 'project'\n"
         )
+        sys.exit(1)
