@@ -59,11 +59,11 @@ def follow_up_start_project(name: str, directory: Optional[str] = None):
     create_accounts_app(manage_dir)
 
 
-def rename_file(old_name, new_name, base_dir):
+def rename_file(old_name: str, new_name: str, base_dir: pathlib.Path):
     (base_dir / old_name).rename(base_dir / new_name)
 
 
-def create_accounts_app(directory):
+def create_accounts_app(directory: pathlib.Path):
     dest = directory / "accounts"
     dest.mkdir()
 
@@ -76,6 +76,6 @@ def create_accounts_app(directory):
         write_file(dest / filename, content)
 
 
-def write_file(file, content):
+def write_file(file: pathlib.Path, content: str):
     file.touch()
     file.write_text(content)
