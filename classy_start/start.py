@@ -1,6 +1,7 @@
 import enum
 import pathlib
 import subprocess
+import sys
 from typing import List, Optional
 
 from . import file_contents, paths
@@ -23,7 +24,10 @@ def _start(what: Startable, name: str, directory: Optional[str] = None):
     templates_dir_name = f"{what.name}_TEMPLATES_DIR"
     cmd.extend(["--template", str(getattr(paths, templates_dir_name))])
 
-    subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    try:
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError:
+        sys.exit(1)
 
 
 def start_app(name: str, directory: Optional[str] = None):
