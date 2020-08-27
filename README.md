@@ -74,3 +74,10 @@ And I found that thing in building this.
 ## Status
 
 v0.0.1 (Beta) released on PyPI
+
+
+## FAQs
+
+__Q1__: Yo, @mfonism, I'm really happy for you, I'mma let you finish, but do you know you just wrote the [frugly](https://www.urbandictionary.com/define.php?term=frugly)-est django-cookiecutter ever?
+
+__A1__: Dude, did you read the [But Really, Why?](#but-really-why) section?
