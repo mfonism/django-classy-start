@@ -73,4 +73,4 @@ And I found that thing in building this.
 
 ## Status
 
-WIP (Just need to beat it into a PyPI-ready package, put it up on PyPI, and we're done)
+v0.0.1 (Beta) released on PyPI
