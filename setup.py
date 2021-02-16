@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='django-classy-start',
-    version='0.0.1',
+    version='0.0.2',
     author='Mfon Eti-mfon',
     author_email='mfon@etimfon.com',
     description=(
