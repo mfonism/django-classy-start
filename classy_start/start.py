@@ -14,15 +14,15 @@ class Startable(enum.Enum):
 
 
 def _start(what: Startable, name: str, directory: Optional[str] = None):
-    directive = f"start{what.name.lower()}"
+    directive = f'start{what.name.lower()}'
     cmd: List[str]
-    cmd = ["django-admin", directive, name]
+    cmd = ['django-admin', directive, name]
 
     if directory is not None:
         cmd.append(directory)
 
-    templates_dir_name = f"{what.name}_TEMPLATES_DIR"
-    cmd.extend(["--template", str(getattr(paths, templates_dir_name))])
+    templates_dir_name = f'{what.name}_TEMPLATES_DIR'
+    cmd.extend(['--template', str(getattr(paths, templates_dir_name))])
 
     try:
         subprocess.run(cmd, check=True)
@@ -42,15 +42,15 @@ def start_project(name: str, directory: Optional[str] = None):
 
 def follow_up_start_project(name: str, directory: Optional[str] = None):
     if directory is None:
-        manage_dir = pathlib.Path(".") / name
+        manage_dir = pathlib.Path('.') / name
     else:
         manage_dir = pathlib.Path(directory)
 
     manage_dir.resolve(strict=True)
     name_change_map = {
-        "secrets.py": ".env",
-        "gitignore.py": ".gitignore",
-        "requirements.py": "requirements.txt",
+        'secrets.py': '.env',
+        'gitignore.py': '.gitignore',
+        'requirements.py': 'requirements.txt',
     }
 
     for (old_name, new_name) in name_change_map.items():
@@ -64,14 +64,14 @@ def rename_file(old_name: str, new_name: str, base_dir: pathlib.Path):
 
 
 def create_accounts_app(directory: pathlib.Path):
-    dest = directory / "accounts"
+    dest = directory / 'accounts'
     dest.mkdir()
 
-    start_app("accounts", dest)
+    start_app('accounts', dest)
 
     for (filename, content) in [
-        ("models.py", file_contents.auth_user_model_file_content),
-        ("admin.py", file_contents.auth_user_admin_file_content),
+        ('models.py', file_contents.auth_user_model_file_content),
+        ('admin.py', file_contents.auth_user_admin_file_content),
     ]:
         write_file(dest / filename, content)
 
